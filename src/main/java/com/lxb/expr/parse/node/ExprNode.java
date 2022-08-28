@@ -3,6 +3,7 @@ package com.lxb.expr.parse.node;
 import com.lxb.error.Error;
 import com.lxb.expr.parse.parse.Tags;
 import com.lxb.expr.parse.parse.Tree;
+import com.lxb.expr.parse.visitor.Visitor;
 import com.lxb.models.FuncType;
 import lombok.Data;
 
@@ -46,6 +47,11 @@ public class ExprNode implements Node {
 
     public Tags.TagsAndError tags() {
         return new Tags.TagsAndError();
+    }
+
+    @Override
+    public Object accept(Visitor visitor) {
+        return visitor.visit(this);
     }
 
 

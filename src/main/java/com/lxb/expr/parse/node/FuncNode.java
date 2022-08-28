@@ -4,6 +4,7 @@ import com.lxb.error.Error;
 import com.lxb.expr.parse.parse.Func;
 import com.lxb.expr.parse.parse.Tags;
 import com.lxb.expr.parse.parse.Tree;
+import com.lxb.expr.parse.visitor.Visitor;
 import com.lxb.models.FuncType;
 import lombok.Data;
 
@@ -40,6 +41,7 @@ public class FuncNode implements Node {
             }
             str.append(args.get(i).string());
         }
+        str.append(")");
         return str.toString();
     }
 
@@ -51,6 +53,7 @@ public class FuncNode implements Node {
             }
             str.append(args.get(i).stringAST());
         }
+        str.append(")");
         return str.toString();
     }
 
@@ -68,4 +71,10 @@ public class FuncNode implements Node {
     public Error check(Tree tree) {
         return null;
     }
+
+    @Override
+    public Object accept(Visitor visitor) {
+        return visitor.visit(this);
+    }
+
 }

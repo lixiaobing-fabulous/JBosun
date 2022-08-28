@@ -4,12 +4,13 @@ import com.lxb.error.Error;
 import com.lxb.expr.parse.lex.Item;
 import com.lxb.expr.parse.parse.Tags;
 import com.lxb.expr.parse.parse.Tree;
+import com.lxb.expr.parse.visitor.Visitor;
 import com.lxb.models.FuncType;
-import lombok.Getter;
+import lombok.Data;
 
 import java.util.Arrays;
 import java.util.List;
-@Getter
+@Data
 public class BinaryNode implements Node{
     private NodeType   nodeType;
     private int        pos;
@@ -30,7 +31,7 @@ public class BinaryNode implements Node{
     }
 
     public String stringAST() {
-        return String.format("%s(%s %s)", operator.val, args.get(0), args.get(1));
+        return String.format("%s(%s %s)", operator.val, args.get(0).stringAST(), args.get(1).stringAST());
     }
 
     public Error check(Tree tree) {
@@ -84,5 +85,10 @@ public class BinaryNode implements Node{
             return args.get(1).tags();
         }
         return tags;
+    }
+
+    @Override
+    public Object accept(Visitor visitor) {
+        return visitor.visit(this);
     }
 }

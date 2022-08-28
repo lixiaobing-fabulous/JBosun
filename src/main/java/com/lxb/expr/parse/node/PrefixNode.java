@@ -3,10 +3,11 @@ package com.lxb.expr.parse.node;
 import com.lxb.error.Error;
 import com.lxb.expr.parse.parse.Tags;
 import com.lxb.expr.parse.parse.Tree;
+import com.lxb.expr.parse.visitor.Visitor;
 import com.lxb.models.FuncType;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 public class PrefixNode implements Node {
     public NodeType nodeType;
     public int      pos;
@@ -45,4 +46,10 @@ public class PrefixNode implements Node {
     public Tags.TagsAndError tags() {
         return arg.tags();
     }
+
+    @Override
+    public Object accept(Visitor visitor) {
+        return visitor.visit(this);
+    }
+
 }

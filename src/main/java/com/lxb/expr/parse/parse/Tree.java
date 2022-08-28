@@ -1,6 +1,5 @@
 package com.lxb.expr.parse.parse;
 
-import com.lxb.error.Error;
 import com.lxb.expr.parse.lex.Item;
 import com.lxb.expr.parse.lex.ItemType;
 import com.lxb.expr.parse.lex.Lexer;
@@ -12,7 +11,6 @@ import com.lxb.expr.parse.node.NumberNode;
 import com.lxb.expr.parse.node.PrefixNode;
 import com.lxb.expr.parse.node.StringNode;
 import com.lxb.expr.parse.node.UnaryNode;
-import com.sun.org.apache.xpath.internal.ExpressionNode;
 
 import java.util.Map;
 
@@ -27,6 +25,7 @@ public class Tree {
 
     public Tree(String text, Map<String, Func> funcs) {
         this.text = text;
+        this.lex = new Lexer(text);
         this.funcs = funcs;
         this.token = new Item[1];
     }
@@ -184,7 +183,7 @@ public class Tree {
                     f.append(new StringNode(token.pos, token.val, token.val.substring(1, token.val.length() - 1)));
                     break;
                 case itemRightParen:
-                    break;
+                    return f;
                 case itemExpr:
                     expect(ItemType.itemLeftParen, "v() expect left paran in itemExpr");
                     int start = lex.lastPos;
@@ -213,25 +212,35 @@ public class Tree {
                         }
                     }
                     ExprNode exprNode = new ExprNode(lex.input.substring(start, lex.lastPos), lex.pos);
-
-                    //TODO parsesub
+                    exprNode.setTree(parseSub(exprNode.getText()));
                     f.append(exprNode);
                     break;
+                default:
+                    backup();
+                    Node o = O();
+                    f.append(o);
             }
             Item tk = next();
             switch (tk.typ) {
                 case itemComma:
                     break;
                 case itemRightParen:
-                    break;
+                    return f;
                 default:
                     unexpected(tk, "func");
             }
         }
     }
 
+    public Tree parseSub(String text) {
+        Tree tree = new Tree(text, funcs);
+        tree.parse();
+        return tree;
+    }
+
     public Func getFunction(String name) {
-        return funcs.get(name);
+//        return funcs.get(name);
+        return new Func();
     }
 
     public Item expect(ItemType expected, String context) {

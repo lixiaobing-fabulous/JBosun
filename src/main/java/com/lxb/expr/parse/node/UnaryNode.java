@@ -4,10 +4,11 @@ import com.lxb.error.Error;
 import com.lxb.expr.parse.lex.Item;
 import com.lxb.expr.parse.parse.Tags;
 import com.lxb.expr.parse.parse.Tree;
+import com.lxb.expr.parse.visitor.Visitor;
 import com.lxb.models.FuncType;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 public class UnaryNode implements Node {
     private NodeType nodeType;
     private int      pos;
@@ -28,7 +29,7 @@ public class UnaryNode implements Node {
     }
 
     public String stringAST() {
-        return String.format("%s(%s)", operator.val, arg);
+        return String.format("%s(%s)", operator.val, arg.stringAST());
     }
 
     public Error check(Tree tree) {
@@ -50,4 +51,10 @@ public class UnaryNode implements Node {
     public Tags.TagsAndError tags() {
         return arg.tags();
     }
+
+    @Override
+    public Object accept(Visitor visitor) {
+        return visitor.visit(this);
+    }
+
 }

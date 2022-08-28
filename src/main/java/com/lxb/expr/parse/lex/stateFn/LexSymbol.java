@@ -8,6 +8,7 @@ import static com.lxb.expr.parse.lex.LexUtils.SYMBOLS;
 public class LexSymbol implements StateFn {
     @Override
     public StateFn apply(Lexer lexer) {
+        lexer.backup();
         lexer.acceptRun(SYMBOLS);
         String symbol = lexer.input.substring(lexer.start, lexer.pos);
         switch (symbol) {
@@ -61,4 +62,5 @@ public class LexSymbol implements StateFn {
         }
         return new LexItem();
     }
+
 }

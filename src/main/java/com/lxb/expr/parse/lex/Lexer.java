@@ -7,9 +7,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Lexer {
-    public String  input;
-    public StateFn state;
-    public int     pos;
+    public String      input;
+    public StateFn     state;
+    public int         pos;
     public int         start;
     public int         lastPos;
     public Queue<Item> items;
@@ -26,9 +26,9 @@ public class Lexer {
     }
 
     public void backup() {
-        if (this.pos == this.input.length()) {
-            return;
-        }
+//        if (this.pos == this.input.length()) {
+//            return;
+//        }
         this.pos--;
     }
 
@@ -41,15 +41,20 @@ public class Lexer {
         if (valid.indexOf(next()) >= 0) {
             return true;
         }
-        backup();
+        if (pos < input.length()) {
+            backup();
+        }
         return false;
     }
 
     public void acceptRun(String valid) {
         while (valid.indexOf(next()) >= 0) {
         }
-        backup();
+        if (pos <= input.length()) {
+            backup();
+        }
     }
+
 
     public void ignore() {
         this.start = this.pos;
@@ -71,7 +76,7 @@ public class Lexer {
     }
 
     public Lexer(String input) {
-        this.input = input;
+        this.input = input + " ";
         this.items = new LinkedList<>();
         for (state = new LexItem(); state != null; ) {
             this.state = this.state.apply(this);
